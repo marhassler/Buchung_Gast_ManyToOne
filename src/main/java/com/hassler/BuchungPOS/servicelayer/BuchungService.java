@@ -21,11 +21,7 @@ public class BuchungService {
     public Buchung retrieveBuchung(Long id)
     {
         Optional<Buchung> selectedBuchung = buchungRepository.findById(id);
-        if (selectedBuchung.isPresent())
-        {
-            return selectedBuchung.get();
-        }
-        return null;
+        return selectedBuchung.orElse(null);
 
     }
     public void updateBuchung(Long id , Buchung buchung)
