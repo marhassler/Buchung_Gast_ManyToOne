@@ -1,6 +1,8 @@
 package com.hassler.BuchungPOS.domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "Buchung")
@@ -8,6 +10,8 @@ public class Buchung {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @Size(min = 2,max = 20)
+    @NotBlank
     private String buchungsNummer;
     @ManyToOne
     @JoinColumn(name = "gast_id")

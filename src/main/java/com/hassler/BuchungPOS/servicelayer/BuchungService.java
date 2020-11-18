@@ -2,7 +2,12 @@ package com.hassler.BuchungPOS.servicelayer;
 
 import com.hassler.BuchungPOS.domain.Buchung;
 import com.hassler.BuchungPOS.repository.BuchungRepository;
+import com.hassler.BuchungPOS.repository.GastRepository;
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,32 +19,38 @@ public class BuchungService {
     @Autowired
     BuchungRepository buchungRepository;
 
-    public void createBuchung(Buchung buchung)
+    @Autowired
+    GastRepository gastRepository;
+
+    public Buchung createBuchung(Long gastId, Buchung buchung)
     {
-        buchungRepository.save(buchung);
+        return gastRepository.findById(gastId).map(gast -> {
+            buchung.setGast(gast);
+            return buchungRepository.save(buchung);
+        }).orElseThrow(() -> new ResourceNotFoundException("GastId " + gastId + " not found"));
     }
-    public Buchung retrieveBuchung(Long id)
+    public Page<Buchung> retrieveBuchung(Long gastId, Pageable pageable)
     {
-        Optional<Buchung> selectedBuchung = buchungRepository.findById(id);
-        return selectedBuchung.orElse(null);
+        return buchungRepository.findByGastId(gastId, pageable);
 
     }
-    public void updateBuchung(Long id , Buchung buchung)
+    public Buchung updateBuchung(Long gastId ,Long buchungId, Buchung buchung1)
     {
-        Optional<Buchung> selectedBuchung = buchungRepository.findById(id);
-        if(selectedBuchung.isPresent())
-        {
-            Buchung newBuchung = selectedBuchung.get();
-            newBuchung.setBuchungsNummer(buchung.getBuchungsNummer());
-            newBuchung.setGast(buchung.getGast());
-
-
-            buchungRepository.save(newBuchung);
+        if(!gastRepository.existsById(gastId)) {
+            return null;
         }
+
+        return buchungRepository.findById(buchungId).map(buchung2 -> {
+            buchung2.setBuchungsNummer(buchung1.getBuchungsNummer());
+            return buchungRepository.save(buchung2);
+        }).orElse(null);
     }
-    public void deleteBuchung(Long id)
+    public ResponseEntity<?> deleteBuchung(Long gastId ,Long buchungId)
     {
-        buchungRepository.deleteById(id);
+        return buchungRepository.findByIdAndGastId(buchungId,gastId).map(buchung -> {
+            buchungRepository.delete(buchung);
+            return ResponseEntity.ok().build();
+        }).orElse(null);
     }
 
     public BuchungRepository getBuchungRepository() {

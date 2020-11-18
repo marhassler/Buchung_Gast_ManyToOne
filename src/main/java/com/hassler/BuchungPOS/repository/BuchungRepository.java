@@ -10,6 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface BuchungRepository extends CrudRepository<Buchung,Long> {
-    Page<Buchung> findByGastId(Long postId, Pageable pageable);
-    Optional<Buchung> findByIdAndGastId(Long id, Long postId);
+    Page<Buchung> findByGastId(Long gastId, Pageable pageable);
+    Optional<Buchung> findByIdAndGastId(Long id, Long gastId);
 }

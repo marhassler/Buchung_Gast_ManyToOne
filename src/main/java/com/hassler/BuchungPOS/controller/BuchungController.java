@@ -34,36 +34,23 @@ public class BuchungController {
     public Buchung createBuchung(@PathVariable (value = "gastId") Long gastId,
             @RequestBody Buchung buchung)
     {
-        return gastRepository.findById(gastId).map(gast -> {
-            buchung.setGast(gast);
-            return buchungRepository.save(buchung);
-        }).orElseThrow(() -> new ResourceNotFoundException("GastId " + gastId + " not found"));
+       return buchungService.createBuchung(gastId, buchung);
     }
     @GetMapping("/gast/{gastId}/buchung")
     public Page<Buchung> getAllBuchungbyGastId(@PathVariable (value = "gastId") Long gastId,
                                                Pageable pageable) {
-        return buchungRepository.findByGastId(gastId, pageable);
+        return buchungService.retrieveBuchung(gastId, pageable);
     }
     @PutMapping("gast/{gastId}/buchung/{buchungId}")
     public Buchung updateBuchung(@PathVariable (value = "gastId") Long gastId,
                                  @PathVariable (value = "buchungId") Long buchungId,
                                  @Valid @RequestBody Buchung buchung1) {
-        if(!gastRepository.existsById(gastId)) {
-            throw new ResourceNotFoundException("GastId " + gastId + " not found");
-        }
-
-        return buchungRepository.findById(buchungId).map(buchung2 -> {
-            buchung2.setBuchungsNummer(buchung1.getBuchungsNummer());
-            return buchungRepository.save(buchung2);
-        }).orElseThrow(() -> new ResourceNotFoundException("BuchungId " + buchungId + "not found"));
+        return buchungService.updateBuchung(gastId,buchungId,buchung1);
     }
     @DeleteMapping("gast/{gastId}/buchung/{buchungId}")
-    public ResponseEntity<?> deleteComment(@PathVariable (value = "gastId") Long gastId,
+    public ResponseEntity<?> deleteBuchung(@PathVariable (value = "gastId") Long gastId,
                                            @PathVariable (value = "buchungId") Long buchungId) {
-        return buchungRepository.findByIdAndGastId(buchungId, gastId).map(buchung -> {
-            buchungRepository.delete(buchung);
-            return ResponseEntity.ok().build();
-        }).orElseThrow(() -> new ResourceNotFoundException("Buchung not found with id " + buchungId + " and GastId " + gastId));
+        return buchungService.deleteBuchung(gastId,buchungId);
     }
 
 

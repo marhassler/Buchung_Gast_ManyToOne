@@ -1,12 +1,15 @@
 package com.hassler.BuchungPOS.servicelayer;
 
+import com.hassler.BuchungPOS.domain.Buchung;
 import com.hassler.BuchungPOS.domain.Gast;
+import com.hassler.BuchungPOS.repository.BuchungRepository;
 import com.hassler.BuchungPOS.repository.GastRepository;
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class GastService {
@@ -14,28 +17,27 @@ public class GastService {
     @Autowired
     GastRepository gastRepository;
 
-    public void createGast(Gast Gast)
+    public Gast createGast(Gast gast)
     {
-        gastRepository.save(Gast);
+        return gastRepository.save(gast);
     }
-    public Gast retrieveGast(Long id)
+    public List<Gast> retrieveAllGast()
     {
-        Optional<Gast> selectedGast = gastRepository.findById(id);
-        return selectedGast.orElse(null);
+        return (List<Gast>) gastRepository.findAll();
 
     }
-    public void updateGast(Long id , Gast Gast)
+    public Gast updateGast(Long gastId , Gast gast2)
     {
-        Optional<Gast> selectedGast = gastRepository.findById(id);
-        if(selectedGast.isPresent())
-        {
-            Gast newGast = selectedGast.get();
-            newGast.setName(Gast.getName());
-            gastRepository.save(newGast);
-        }
+        return gastRepository.findById(gastId).map(gast -> {
+            gast.setName(gast2.getName());
+            return gastRepository.save(gast);
+        }).orElse(null);
     }
-    public void deleteGast(Long id)
+    public ResponseEntity<Object> deleteGast(Long gastId)
     {
-        gastRepository.deleteById(id);
+        return gastRepository.findById(gastId).map(gast -> {
+            gastRepository.delete(gast);
+            return ResponseEntity.ok().build();
+        }).orElse(null);
     }
 }
