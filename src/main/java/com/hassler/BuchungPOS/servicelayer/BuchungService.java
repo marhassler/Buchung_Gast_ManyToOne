@@ -45,4 +45,8 @@ public class BuchungService {
     {
         buchungRepository.deleteById(id);
     }
+
+    public BuchungRepository getBuchungRepository() {
+        return buchungRepository;
+    }
 }

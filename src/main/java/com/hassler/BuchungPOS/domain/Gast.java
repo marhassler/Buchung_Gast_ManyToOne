@@ -33,4 +33,21 @@ public class Gast {
     public void setBuchungen(List<Buchung> buchungen) {
         this.buchungen = buchungen;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<Buchung> getBuchungen() {
+        return buchungen;
+    }
+
+    public Long getId()
+    {
+        return id;
+    }
 }
