@@ -22,4 +22,20 @@ public class Buchung {
     {
 
     }
+
+    public String getBuchungsNummer() {
+        return buchungsNummer;
+    }
+
+    public void setBuchungsNummer(String buchungsNummer) {
+        this.buchungsNummer = buchungsNummer;
+    }
+
+    public Gast getGast() {
+        return gast;
+    }
+
+    public void setGast(Gast gast) {
+        this.gast = gast;
+    }
 }
