@@ -27,7 +27,7 @@ public class BuchungService {
         return gastRepository.findById(gastId).map(gast -> {
             buchung.setGast(gast);
             return buchungRepository.save(buchung);
-        }).orElseThrow(() -> new ResourceNotFoundException("GastId " + gastId + " not found"));
+        }).orElse(null);
     }
     public Page<Buchung> retrieveBuchung(Long gastId, Pageable pageable)
     {
